@@ -7,16 +7,16 @@ def API(client, server) :
     hangul_utf8 = urllib.parse.quote("")
     conn.request("GET", server+hangul_utf8)
     req = conn.getresponse()
-    print(req.status,req.reason)
+    #print(req.status,req.reason)
     cLen = req.getheader("Content-Length")
     data = req.read(cLen).decode('utf-8')
     return data
 
-def Parsing(xmlsrc) :
+def Parsing(xmlsrc,subName) :
     doc = parseString(xmlsrc)
     names = doc.getElementsByTagName("item")
     list= []
     for i in range (names.length):
-        contents = names[i].getElementsByTagName("ttTitle")
+        contents = names[i].getElementsByTagName(subName)
         list.append(contents[0].firstChild.data)
     return list

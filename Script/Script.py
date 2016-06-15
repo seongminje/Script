@@ -12,7 +12,17 @@ from PyQt5.QtWidgets import QTextEdit, QWidget, QDialog, QApplication, QMessageB
 from PyQt5.QtWidgets import QGridLayout, QLabel, QLineEdit
 
 class MainWindow(QDialog, GUI.Ui_Dialog):
-    list = define.Parsing(define.API("openapi.jejutour.go.kr:8080", "/openapi/service/TourCourseService/getTourCosList?ServiceKey=mcVXPBIgozkl0CsuSqONRV9GmUuPgjVX5CxQ%2Fey6BPQ51vtKXCZtpy%2FeEmRtDjkUgP3CM0DjJvHQBavYImW18w%3D%3D&numOfRows=999&pageSize=999&pageNo=1&startPage=1")) 
+    def __init__(self, parent=None):
+        InfoList =[]
+        super(MainWindow, self).__init__(parent)
+        self.setupUi(self)
+        list = define.Parsing(define.API("openapi.jejutour.go.kr:8080", "/openapi/service/TourCourseService/getTourCosList?ServiceKey=mcVXPBIgozkl0CsuSqONRV9GmUuPgjVX5CxQ%2Fey6BPQ51vtKXCZtpy%2FeEmRtDjkUgP3CM0DjJvHQBavYImW18w%3D%3D&numOfRows=999&pageSize=999&pageNo=1&startPage=1"), "ttTitle") 
+        SeqList = define.Parsing(define.API("openapi.jejutour.go.kr:8080", "/openapi/service/TourCourseService/getTourCosList?ServiceKey=mcVXPBIgozkl0CsuSqONRV9GmUuPgjVX5CxQ%2Fey6BPQ51vtKXCZtpy%2FeEmRtDjkUgP3CM0DjJvHQBavYImW18w%3D%3D&numOfRows=999&pageSize=999&pageNo=1&startPage=1"), "ttSeq")
+        for i in range(30) :
+            self.listWidget_1.addItem(list[i])
+            InfoList += define.Parsing(define.API("openapi.jejutour.go.kr:8080", "/openapi/service/TourCourseService/getTourCosView?ServiceKey=mcVXPBIgozkl0CsuSqONRV9GmUuPgjVX5CxQ%2Fey6BPQ51vtKXCZtpy%2FeEmRtDjkUgP3CM0DjJvHQBavYImW18w%3D%3D&SEQ="+ SeqList[i] +"&numOfRows=999&pageSize=999&pageNo=1&startPage=1"), "ttContents")          
+        self.pushButton_3.clicked.connect(self.searchList)
+        
     def closeEvent(self, event):
         ans = QMessageBox.question(self, '제주도 여행기', "종료하시겠습니까?", QMessageBox.Yes | QMessageBox.No)
         if ans == QMessageBox.Yes:
@@ -20,18 +30,11 @@ class MainWindow(QDialog, GUI.Ui_Dialog):
         else:
             event.ignore() 
 
-    def __init__(self, parent=None):
-        super(MainWindow, self).__init__(parent)
-        self.setupUi(self)
-        for i in range(30) :
-            self.listWidget_1.addItem(self.list[i])
-        self.pushButton_3.clicked.connect(self.searchList)
-        
     def searchList(self, event):
         if self.textEdit.toPlainText()=="":
             QMessageBox.information(self, '경고', "검색어를 입력해 주세요.", QMessageBox.Yes)
         else :
-            find = False    
+            find = False
             keyword = self.textEdit.toPlainText()
             if self.pushButton_3.clicked:
                 self.listWidget_2.clear()
